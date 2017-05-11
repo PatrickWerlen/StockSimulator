@@ -10,6 +10,7 @@ public class Model{
         companies.get(company).placeOrder(new Order(quantity, price, buy));
     }
 
+    //creates 5 companies with random initial values
     public void createCompanies(){
         companies.add(0, new Company("Apple", 1000*Math.random()));
         companies.add(1, new Company("Microsoft", 1000*Math.random()));

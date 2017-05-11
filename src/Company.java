@@ -1,18 +1,17 @@
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Alert;
-
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+
 
 
 public class Company{
+
     private ArrayDeque<Order> orderqueue = new ArrayDeque<>();
 
+    //attributes of company
     private String name;
     private double price;
     public DoubleProperty priceProperty = new SimpleDoubleProperty();
@@ -44,6 +43,12 @@ public class Company{
     }
 
     public void placeOrder(Order order){
+        /*
+         IF the order is a buy order, it will be added to the orderqueue
+        and the custody account gets changed with the new values (quantity)
+         ELSE the sell will get handled in a seperate function
+        After every transaction there a new price simulated
+         */
         if(order.isBuy()){
             orderqueue.add(order);
             quantity += order.getQuantity();
@@ -54,6 +59,7 @@ public class Company{
     }
 
     public void simulate(){
+        // 50% of the time the price increases/decreases
         double direction = Math.random();
         if(direction > 0.5) {
             price =round(price*(1+(Math.random()/10)),2);
@@ -65,22 +71,27 @@ public class Company{
     }
 
     public void handleSell(Order order){
-        if(quantity < order.getQuantity()){
+        //checks if you hold enough stocks to sell them
+        if(quantity < order.getQuantity()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Dialog");
             alert.setHeaderText("Transaction not possible");
             alert.setContentText("You do not own enough shares of that company!");
             alert.showAndWait();
         } else {
+            /*creates a counter orderSize to keep count of how many
+            shares still need to be sold*/
             int orderSize = order.getQuantity();
             quantity -= order.getQuantity();
             while(!(orderSize==0)){
                 Order tmp = orderqueue.getFirst();
+                //checks if the first order in the queue is smaller than the ordersize
                 if(tmp.getQuantity() < order.getQuantity()){
                     profit += (order.getPrice()-tmp.getPrice())*tmp.getQuantity();
                     orderSize -= order.getQuantity();
                     orderqueue.removeFirst();
                 }else{
+                    //changes profit etc. and changes the quantity of the existing order
                     profit += (order.getPrice()-tmp.getPrice())*order.getQuantity();
                     tmp.setQuantity(tmp.getQuantity()-order.getQuantity());
                     orderqueue.removeFirst();
