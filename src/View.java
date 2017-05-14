@@ -8,8 +8,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.function.UnaryOperator;
 
 public class View extends Stage{
